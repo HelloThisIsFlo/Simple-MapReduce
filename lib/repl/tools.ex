@@ -4,6 +4,8 @@ defmodule Repl.Tools do
   @bench 10_000
   @pipeline_name "bench"
   @number_workers 10
+  @heavy_work_module Repl.FakeHeavyWork
+
 
   def start_pipeline_with_workers do
     SimpleMapreduce.start_new_pipeline @pipeline_name
@@ -12,38 +14,77 @@ defmodule Repl.Tools do
     end
   end
 
-  # TODO: Fix
 
-  # def benchdistrib(b \\ @bench) do
-  # #    start_pipeline_with_workers()
-  #   json = json_match() |> List.duplicate(b)
-  #   IO.puts "--------------------------------------------------"
-  #   IO.puts "Benchmarking Distributed Parsing with #{b} elements"
-  #   measure(SimpleMapreduce, :parse_all, [json, @pipeline_name, :infinity])
-  #   IO.puts "--------------------------------------------------"
-  # end
-  # def benchasync(b \\ @bench) do
-  #   IO.puts "--------------------------------------------------"
-  #   IO.puts "Benchmarking Async(local) Parsing with #{b} elements"
-  #   json_without_id = match_string() |> List.duplicate(b)
-  #   measure(Experimental.Parsing, :async_all, [json_without_id])
-  #   IO.puts "--------------------------------------------------"
-  # end
-  # def compare(b \\ @bench) do
-  #   IO.puts ""
-  #   benchasync b
-  #   benchdistrib b
-  #   IO.puts ""
-  # end
+  def benchdistrib(b \\ @bench) do
+     start_pipeline_with_workers()
+    elements = "text" |> List.duplicate(b)
+    IO.puts "--------------------------------------------------"
+    IO.puts "Benchmarking Distributed Parsing with #{b} elements"
+    IO.puts "WARNING ==> Benchmark is broken, remove RANDOM sleep from FakeHeavyWork"
+    IO.puts "WARNING ==> Benchmark is broken, remove RANDOM sleep from FakeHeavyWork"
+    IO.puts "WARNING ==> Benchmark is broken, remove RANDOM sleep from FakeHeavyWork"
+    IO.puts "WARNING ==> Benchmark is broken, remove RANDOM sleep from FakeHeavyWork"
+    IO.puts "WARNING ==> Benchmark is broken, remove RANDOM sleep from FakeHeavyWork"
+    IO.puts "WARNING ==> Benchmark is broken, remove RANDOM sleep from FakeHeavyWork"
+    IO.puts "WARNING ==> Benchmark is broken, remove RANDOM sleep from FakeHeavyWork"
+    IO.puts "WARNING ==> Benchmark is broken, remove RANDOM sleep from FakeHeavyWork"
+    IO.puts "WARNING ==> Benchmark is broken, remove RANDOM sleep from FakeHeavyWork"
+    IO.puts "WARNING ==> Benchmark is broken, remove RANDOM sleep from FakeHeavyWork"
+    IO.puts "WARNING ==> Benchmark is broken, remove RANDOM sleep from FakeHeavyWork"
+    measure(Repl.Tools, :distributed, [elements])
+    IO.puts "--------------------------------------------------"
+  end
+  def benchasync(b \\ @bench) do
+    IO.puts "--------------------------------------------------"
+    IO.puts "Benchmarking Async(local) Parsing with #{b} elements"
+    IO.puts "WARNING ==> Benchmark is broken, remove RANDOM sleep from FakeHeavyWork"
+    IO.puts "WARNING ==> Benchmark is broken, remove RANDOM sleep from FakeHeavyWork"
+    IO.puts "WARNING ==> Benchmark is broken, remove RANDOM sleep from FakeHeavyWork"
+    IO.puts "WARNING ==> Benchmark is broken, remove RANDOM sleep from FakeHeavyWork"
+    IO.puts "WARNING ==> Benchmark is broken, remove RANDOM sleep from FakeHeavyWork"
+    IO.puts "WARNING ==> Benchmark is broken, remove RANDOM sleep from FakeHeavyWork"
+    IO.puts "WARNING ==> Benchmark is broken, remove RANDOM sleep from FakeHeavyWork"
+    IO.puts "WARNING ==> Benchmark is broken, remove RANDOM sleep from FakeHeavyWork"
+    IO.puts "WARNING ==> Benchmark is broken, remove RANDOM sleep from FakeHeavyWork"
+    IO.puts "WARNING ==> Benchmark is broken, remove RANDOM sleep from FakeHeavyWork"
+    IO.puts "WARNING ==> Benchmark is broken, remove RANDOM sleep from FakeHeavyWork"
+    elements = "text" |> List.duplicate(b)
+    measure(Repl.Tools, :async, [elements])
+    IO.puts "--------------------------------------------------"
+  end
 
-  # def json_element(index), do: {:football, :runningball, "json" <> to_string(index), index}
-  # def json_match, do: {:football, :runningball, match_string(), 1234}
-  # def match_string, do: "./runningball.json" |> File.read!
+
+  def distributed(elements) do
+    SimpleMapreduce.do_heavy_work_on_all_elements(elements, @pipeline_name, :infinity)
+  end
+  def async(elements) do
+    elements
+    |> Task.async_stream(&@heavy_work_module.do_heavy_work/1, [])
+    |> Enum.to_list
+    |> Enum.map(&extract_result/1)
+  end
+  defp extract_result({:ok, result}), do: result
+  defp extract_result(_), do: raise ArgumentError, "Idk what happened"
+
+
+  def compare(b \\ @bench) do
+    IO.puts ""
+    benchasync b
+    benchdistrib b
+    IO.puts ""
+  end
+
 
   def measure(module, function, args \\ []) when is_list(args) do
     duration = :timer.tc(module, function, args)
     |> elem(0)
     |> Kernel./(1_000_000)
     IO.inspect duration
+  end
+
+  def list(length \\ 10) do
+    1..length
+    |> Enum.to_list
+    |> Enum.map(&to_string/1)
   end
 end

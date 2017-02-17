@@ -2,7 +2,6 @@ defmodule SimpleMapreduce.Pipeline.Worker do
   alias SimpleMapreduce.Pipeline.Config
   use GenStage
   require Logger
-  #TODO: add max demand as app parameter
 
   @doc"""
   Starts a `SimpleMapreduce.Pipeline.Worker` worker, and connect it to the pipeline.

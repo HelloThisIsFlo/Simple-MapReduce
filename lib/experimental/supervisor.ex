@@ -13,8 +13,8 @@ defmodule Experimental.Supervisor do
   ##############################
   def init(:ok) do
     children = [
-      supervisor(Task.Supervisor, [[name: SimpleMapreduce.RoutingTasks]], id: RoutingTasks),
-      supervisor(Task.Supervisor, [[name: SimpleMapreduce.ParsingTasks]], id: ParsingTasks),
+      supervisor(Task.Supervisor, [[name: Experimental.RoutingTasks]], id: RoutingTasks),
+      supervisor(Task.Supervisor, [[name: Experimental.HeavyWorkTasks]], id: HeavyWorkTasks),
     ]
 
     supervise(children, strategy: :one_for_one)

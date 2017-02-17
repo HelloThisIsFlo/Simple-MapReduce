@@ -1,7 +1,7 @@
 use Mix.Config
 
 config :simple_mapreduce,
-  heavy_work_module: SimpleMapreduce.Mocks.FakeHeavyWork,
+  heavy_work_module: Repl.FakeHeavyWork,
   max_demand_for_worker: 20
 
 config :simple_mapreduce,
