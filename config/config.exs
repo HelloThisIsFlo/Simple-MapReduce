@@ -10,7 +10,7 @@ config :simple_mapreduce,
 
 # Import node config as a separated file
 # Override node configuration in `nodes.exs` file
-import_config "nodes.exs"
+#import_config "nodes.exs"
 
 # Override all config (node included) with env specific configs
 import_config "#{Mix.env}.exs"

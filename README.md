@@ -34,6 +34,9 @@ config :simple_mapreduce,
 
 ```
 
+###Important
+**After changing the configuration. Recompile the dependency**
+
 ## After initial setup
 
 1. Start a pipeline by name:
