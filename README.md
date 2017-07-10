@@ -34,8 +34,13 @@ config :simple_mapreduce,
 
 ```
 
-###Important
-**After changing the configuration. Recompile the dependency**
+### Important: After changing the configuration. Refetch the dependency
+
+```
+mix deps.clean simple_mapreduce
+mix deps.get
+```
+This is a known bug, and will be addressed: [#1](https://github.com/ShockN745/Simple-MapReduce/issues/1)
 
 ## After initial setup
 
