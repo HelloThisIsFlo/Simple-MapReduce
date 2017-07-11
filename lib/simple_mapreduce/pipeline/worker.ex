@@ -1,7 +1,8 @@
 defmodule SimpleMapreduce.Pipeline.Worker do
-  alias SimpleMapreduce.Pipeline.Config
   use GenStage
   require Logger
+
+  @config Application.fetch_env!(:simple_mapreduce, :config_module)
 
   @doc"""
   Starts a `SimpleMapreduce.Pipeline.Worker` worker, and connect it to the pipeline.
@@ -12,13 +13,13 @@ defmodule SimpleMapreduce.Pipeline.Worker do
     {:ok, worker}
   end
 
-  @main_node  Config.main_node()
-  @heavy_work Config.heavy_work_module()
-  @max_demand Config.max_demand()
+  @main_node  @config.main_node()
+  @heavy_work @config.heavy_work_module()
+  @max_demand @config.max_demand()
 
   defp add_to_chain(pipline_name, worker) do
-    json_producer = Config.producer_id(pipline_name)
-    anchor = Config.anchor_id(pipline_name)
+    json_producer = @config.producer_id(pipline_name)
+    anchor = @config.anchor_id(pipline_name)
 
     # Ask final Consumer to subscribe to worker
     GenStage.sync_subscribe {anchor, @main_node}, to: worker, cancel: :temporary

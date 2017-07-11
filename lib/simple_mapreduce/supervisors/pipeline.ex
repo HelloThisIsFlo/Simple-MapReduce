@@ -1,11 +1,12 @@
 defmodule SimpleMapreduce.Supervisors.Pipeline do
-  alias SimpleMapreduce.Pipeline.Config
   import Supervisor.Spec
   use Supervisor
   require Logger
 
+  @config Application.fetch_env!(:simple_mapreduce, :config_module)
+
   def start_link(pipeline_name) do
-    Supervisor.start_link(__MODULE__, pipeline_name, name: Config.pipeline_id(pipeline_name))
+    Supervisor.start_link(__MODULE__, pipeline_name, name: @config.pipeline_id(pipeline_name))
   end
 
 

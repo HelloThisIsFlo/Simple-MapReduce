@@ -1,5 +1,4 @@
 defmodule SimpleMapreduce.Pipeline.WorkerTest do
-  alias SimpleMapreduce.Pipeline.Config
   alias SimpleMapreduce.Pipeline.Worker
   alias SimpleMapreduce.Supervisors.PipelineFactory
   alias SimpleMapreduce.Supervisors.WorkerFactory
@@ -7,6 +6,7 @@ defmodule SimpleMapreduce.Pipeline.WorkerTest do
   use ExUnit.Case
 
   @moduletag :capture_log
+  @config Application.fetch_env!(:simple_mapreduce, :config_module)
 
   setup(context) do
     Application.stop(:sr_distributed)
@@ -50,8 +50,8 @@ defmodule SimpleMapreduce.Pipeline.WorkerTest do
 
   test "worker connects to pipeline", %{pipeline_name: pipeline_name} do
     # Given: Producer and Anchor are up
-    producer = GenServer.whereis(Config.producer_id(pipeline_name))
-    anchor = GenServer.whereis(Config.anchor_id(pipeline_name))
+    producer = GenServer.whereis(@config.producer_id(pipeline_name))
+    anchor = GenServer.whereis(@config.anchor_id(pipeline_name))
     assert nil != producer
     assert nil != anchor
 
@@ -61,6 +61,10 @@ defmodule SimpleMapreduce.Pipeline.WorkerTest do
     assert_subscribed(anchor, to: worker)
     assert_subscribed(worker, to: producer)
   end
+
+  @tag :skip
+  test "main node"
+
 
   def assert_subscribed(consumer, to: producer) do
     number_of_references_to_consumer = producer

@@ -1,10 +1,10 @@
 defmodule SimpleMapreduce.Supervisors.WorkerFactory do
-  alias SimpleMapreduce.Pipeline.Config
   import Supervisor.Spec
   use Supervisor
   require Logger
 
   @extra_worker_factory SimpleMapreduce.Supervisors.ExtraWorkerFactory
+  @config Application.fetch_env!(:simple_mapreduce, :config_module)
 
   @doc """
   To link the worker factory to a specific pipeline: use the pipeline name.
@@ -25,11 +25,11 @@ defmodule SimpleMapreduce.Supervisors.WorkerFactory do
   end
   def add_worker(pipeline_name, node, false) do
     Logger.info "Starting worker | Pipeline = #{pipeline_name} | Node = #{inspect node}"
-    Supervisor.start_child({Config.workerfactory_id(pipeline_name), node}, [pipeline_name])
+    Supervisor.start_child({@config.workerfactory_id(pipeline_name), node}, [pipeline_name])
   end
 
   def workerfactory_id(:extra_worker_factory), do: @extra_worker_factory
-  def workerfactory_id(pipeline_name), do: Config.workerfactory_id(pipeline_name)
+  def workerfactory_id(pipeline_name), do: @config.workerfactory_id(pipeline_name)
 
   ###########################
   ##  Supervisor callbacks ##

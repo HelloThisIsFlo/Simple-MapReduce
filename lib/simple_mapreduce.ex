@@ -1,11 +1,12 @@
 defmodule SimpleMapreduce do
   alias SimpleMapreduce.Supervisors.PipelineFactory
   alias SimpleMapreduce.Supervisors.WorkerFactory
-  alias SimpleMapreduce.Pipeline.Config
   alias SimpleMapreduce.Pipeline.Producer
   use GenStage
   require Logger
   @behaviour SimpleMapreduce.Behaviour
+
+  @config Application.fetch_env!(:simple_mapreduce, :config_module)
 
   @moduledoc """
   Api to access the 'SimpleMapreduce' Application.
@@ -23,7 +24,7 @@ defmodule SimpleMapreduce do
   end
 
 
-  @default_worker_node Config.workers_node()
+  @default_worker_node @config.workers_node()
   @timeout 3000
 
   def start_new_pipeline(pipeline_name) do
@@ -63,7 +64,7 @@ defmodule SimpleMapreduce do
   ###  GenStage callbacks ###
   ###########################
   def init({pipeline_name, callback_pid, expected_count}) do
-    anchor = Config.anchor_id(pipeline_name)
+    anchor = @config.anchor_id(pipeline_name)
     processed = []
     {:consumer, {expected_count, processed, callback_pid}, subscribe_to: [{anchor, [cancel: :temporary]}]}
   end

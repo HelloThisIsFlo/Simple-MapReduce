@@ -1,7 +1,8 @@
 defmodule SimpleMapreduce.Pipeline.Anchor do
-  alias SimpleMapreduce.Pipeline.Config
   use GenStage
   require Logger
+
+  @config Application.fetch_env!(:simple_mapreduce, :config_module)
 
   @moduledoc """
   Defines an Anchor that stays on the main machine to collect the work of all
@@ -12,7 +13,7 @@ defmodule SimpleMapreduce.Pipeline.Anchor do
   """
 
   def start_link(pipeline_name) do
-    GenStage.start_link(__MODULE__, :ok, name: Config.anchor_id(pipeline_name))
+    GenStage.start_link(__MODULE__, :ok, name: @config.anchor_id(pipeline_name))
   end
 
 

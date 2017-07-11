@@ -1,5 +1,5 @@
-defmodule ConfigTest do
-  alias SimpleMapreduce.Pipeline.Config
+defmodule SimpleMapreduce.Mocks.ConfigTest do
+  alias SimpleMapreduce.Mocks.Config
   use ExUnit.Case
 
   test "default node config for tests" do

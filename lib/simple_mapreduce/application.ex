@@ -1,8 +1,9 @@
 defmodule SimpleMapreduce.Application do
   alias SimpleMapreduce.Supervisors.PipelineFactory
   alias SimpleMapreduce.Supervisors.WorkerFactory
-  alias SimpleMapreduce.Pipeline.Config
   use Application
+
+  @config Application.fetch_env!(:simple_mapreduce, :config_module)
 
   def start(_type, _args) do
     if main_node?() do
@@ -13,7 +14,7 @@ defmodule SimpleMapreduce.Application do
   end
 
   defp main_node? do
-    node() == Config.main_node
+    node() == @config.main_node
   end
 
 end

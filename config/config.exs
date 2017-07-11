@@ -1,6 +1,9 @@
 use Mix.Config
 
 config :simple_mapreduce,
+  config_module: SimpleMapreduce.Pipeline.Config
+
+config :simple_mapreduce,
   heavy_work_module: Repl.FakeHeavyWork,
   max_demand_for_worker: 20
 

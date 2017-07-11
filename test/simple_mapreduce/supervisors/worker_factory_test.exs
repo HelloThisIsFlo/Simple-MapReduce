@@ -1,16 +1,17 @@
 defmodule SimpleMapreduce.Supervisors.WorkerFactoryTest do
   alias SimpleMapreduce.Supervisors.WorkerFactory
-  alias SimpleMapreduce.Pipeline.Config
   alias SimpleMapreduce.Pipeline.Worker
   alias SimpleMapreduce
   use ExUnit.Case
 
   @moduletag :capture_log
 
+  @config Application.fetch_env!(:simple_mapreduce, :config_module)
+
   test "get the correct workerfactory id for REGULAR workerfactory" do
     {:ok, pid} = WorkerFactory.start_link "regular"
 
-    expected_name = Config.workerfactory_id "regular"
+    expected_name = @config.workerfactory_id "regular"
     assert expected_name ==  Process.info(pid)[:registered_name]
   end
 
@@ -30,7 +31,7 @@ defmodule SimpleMapreduce.Supervisors.WorkerFactoryTest do
     {:ok, worker_pid} = WorkerFactory.add_worker(pipeline_name, node())
 
     # Then: Worker is added
-    factory = Config.workerfactory_id(pipeline_name)
+    factory = @config.workerfactory_id(pipeline_name)
     worker_module = Worker
     assert [{_, ^worker_pid, _, [^worker_module]}] = Supervisor.which_children(factory)
   end
@@ -45,7 +46,7 @@ defmodule SimpleMapreduce.Supervisors.WorkerFactoryTest do
     {:ok, worker_pid} = WorkerFactory.add_worker(pipeline_name, node(), true)
 
     # Then: Worker is added to the correct factory
-    regular_factory = Config.workerfactory_id(pipeline_name)
+    regular_factory = @config.workerfactory_id(pipeline_name)
     extra_worker_factory = SimpleMapreduce.Supervisors.ExtraWorkerFactory
     assert %{active: 0} = Supervisor.count_children(regular_factory)
     assert %{active: 1} = Supervisor.count_children(extra_worker_factory)

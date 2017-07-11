@@ -1,6 +1,7 @@
 defmodule SimpleMapreduce.Pipeline.Producer do
-  alias SimpleMapreduce.Pipeline.Config
   use GenStage
+
+  @config Application.fetch_env!(:simple_mapreduce, :config_module)
 
   @moduledoc """
 
@@ -9,11 +10,11 @@ defmodule SimpleMapreduce.Pipeline.Producer do
   """
 
   def start_link(pipeline_name) do
-    GenStage.start_link(__MODULE__, :ok, name: Config.producer_id(pipeline_name))
+    GenStage.start_link(__MODULE__, :ok, name: @config.producer_id(pipeline_name))
   end
 
   def add_element_list(pipeline_name, element_list) when is_list(element_list) do
-    GenStage.call(Config.producer_id(pipeline_name), {:add, element_list})
+    GenStage.call(@config.producer_id(pipeline_name), {:add, element_list})
   end
 
 
